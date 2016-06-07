@@ -1,5 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
+if [ -z $ca_pas ]; then
+  printf "Enter passphrase for key encryption: "
+  read ca_pas_var
+  export ca_pas=$ca_pas_var
+fi
 : "${ca_pas:?Need to set ca_pas non-empty}"
 : "${countryName:?Need to set countryName non-empty}"
 : "${stateOrProvinceName:?Need to set stateOrProvinceName non-empty}"
