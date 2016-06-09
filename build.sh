@@ -4,6 +4,8 @@ PKI_PATH="./pki"
 ROOT_CA="$PKI_PATH/root"
 INTERMEDIATE_CA="$PKI_PATH/intermediate"
 
+commonName_base="${commonName}"
+
 if [[ -d "$PKI_PATH" ]]; then
   printf "[FATAL] Path \"$PKI_PATH\" already exists\n"
   exit 1
@@ -21,12 +23,16 @@ done
 cp root.cnf $ROOT_CA/openssl.cnf
 cp intermediate.cnf $INTERMEDIATE_CA/openssl.cnf
 
+export commonName="${commonName_base}Root"
+
 printf "\n==> Generating Root CA key:\n"
 openssl genrsa -passout env:ca_pas -aes256 -out $ROOT_CA/private/root.key 4096
 
 printf "\n==> Generating Root CA certificate:\n"
 openssl req -passin env:ca_pas -passout env:ca_pas -config $ROOT_CA/openssl.cnf -key $ROOT_CA/private/root.key \
   -new -x509 -days 3650 -sha256 -extensions v3_ca -out $ROOT_CA/certs/root.pem
+
+export commonName="${commonName_base}Intermediate"
 
 printf "\n==> Generating Intermediate CA key:\n"
 openssl genrsa -passout env:ca_pas -aes256 -out $INTERMEDIATE_CA/private/intermediate.key 4096
